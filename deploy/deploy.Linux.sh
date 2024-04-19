@@ -27,13 +27,19 @@ fi
 module >&/dev/null
 valid_Module=1
 if [[ $? == 127 ]]; then
-    valid_Module=0
+    valid_Modulee=0
 fi
 
 #@ ..python
 valid_python=1
-if [[ -z $(which python3 2>/dev/null) ]]; then
+pyver=none
+if [[ -z $(which python 2>/dev/null) ]]; then
     valid_python=0
+else
+    pyver=$(python --version | cut -d' ' -f2)
+    if [[ $(echo $pyver | cut -d. -f1) != 3 || $(echo $pyver | cut -d. -f2) -lt 6 ]]; then
+        valid_python=0
+    fi
 fi
 
 #@ .preliminary-functions
@@ -228,7 +234,7 @@ alias unweb='unset https_proxy; unset http_proxy'
 EOF
         if [[ -n $profile ]]; then
             if [[ $valid_python == 0 ]]; then
-                error "Add statement in profile requires python!"
+                error "Add statement in profile requires python with version >= 3.6, now is ${pyver}"
             fi
             cat <<EOF >.temp.$proj
 # >>>>>>>>>>>>>>>>>>>>>>>>>>> [rdee]
@@ -296,7 +302,7 @@ set-alias unweb {unset https_proxy; unset http_proxy}
 EOF
         if [[ -n $profile ]]; then
             if [[ $valid_python == 0 ]]; then
-                error "Add statement in profile requires python!"
+                error "Add statement in profile requires python with version >= 3.6, now is ${pyver}"
             fi
             cat <<EOF >.temp.$proj
 # >>>>>>>>>>>>>>>>>>>>>>>>>>> [rdee]
@@ -326,6 +332,9 @@ EOF
     fi
 
     if [[ -n "$with_repos" ]]; then
+        if [[ $valid_python == 0 ]]; then
+            error "Add statement in profile requires python with version >= 3.6, now is ${pyver}"
+        fi
         IFS=, read -ra repos <<<$with_repos
         for repo in "${repos[@]}"; do
             if [[ "$repo" =~ : ]]; then
