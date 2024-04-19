@@ -1,0 +1,21 @@
+name: Run Deploy-Tests on Dev Branch
+
+on:
+  push: 
+    branches:
+      - dev
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Conda
+      uses: conda-incubator/setup-miniconda@v2
+
+    - name: Execute test script
+      run: |
+        bash deploy/deploy.Linux.sh -u

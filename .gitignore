@@ -1,0 +1,8 @@
+/deploy/export/
+__pycache__/
+*egg-info/
+
+wf.*.md
+
+/build/
+/dist/
