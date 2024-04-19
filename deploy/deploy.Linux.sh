@@ -153,7 +153,7 @@ if [[ $utest == 0 ]]; then
     #@ Main
     #@ .File-Orgnization
     #@ ..WSL-only
-    if [[ $isWSL ]]; then
+    if [[ $isWSL == 1 ]]; then
 
         reDesktop=$reHome/Desktop
         reOnedrive=$reHome/Onedrive
