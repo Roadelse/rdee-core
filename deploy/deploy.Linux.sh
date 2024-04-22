@@ -232,6 +232,25 @@ alias web='echo "plz copy : export http_proxy=127.0.0.1:port; export https_proxy
 alias unweb='unset https_proxy; unset http_proxy'
 
 EOF
+        if [[ $isWSL == 1 ]]; then
+            cat <<EOF >>$scriptDir/export/setenv.rdee.sh
+# >>>>>>>>>>>>>> WSL settings
+export winuser=$winuser
+export Onedrive=$reOnedrive
+alias cdO='cd \$OneDrive/recRoot'
+export Baidusync=$reBaidusync
+alias cdB='cd \$Baidusync/recRoot'
+export winHome=/mnt/c/Users/${winuser}
+export Desktop=$reDesktop
+alias cdU='cd \$winHome'
+alias cdD='cd \$Desktop'
+
+alias ii='explorer.exe'
+EOF
+            if [[ $(ls /mnt/d/DAPP/SumatraPDF/SumatraPDF*exe) != "" ]]; then
+                echo 'alias pdf=/mnt/d/DAPP/SumatraPDF/SumatraPDF*exe' >>$scriptDir/export/setenv.rdee.sh
+            fi
+        fi
         if [[ -n $profile ]]; then
             if [[ $valid_python == 0 ]]; then
                 error "Add statement in profile requires python with version >= 3.6, now is ${pyver}"
@@ -300,6 +319,27 @@ set-alias web {echo "plz copy : export http_proxy=127.0.0.1:port; export https_p
 set-alias unweb {unset https_proxy; unset http_proxy}
 
 EOF
+
+        if [[ $isWSL == 1 ]]; then
+            cat <<EOF >>$scriptDir/export/modulefiles/rdee/default
+setenv winuser $winuser
+setenv Onedrive $reOnedrive
+setenv Baidusync $reBaidusync
+setenv winHome /mnt/c/Users/${winuser}
+setenv Desktop $reDesktop
+
+set-alias cdO "cd \$env(Onedrive)/recRoot"
+set-alias cdB "cd \$env(Baidusync)/recRoot"
+set-alias cdU "cd \$env(winHome)"
+set-alias cdD "cd \$env(Desktop)"
+
+set-alias ii {explorer.exe}
+
+EOF
+            if [[ $(ls /mnt/d/DAPP/SumatraPDF/SumatraPDF*exe) != "" ]]; then
+                echo 'set-alias pdf {/mnt/d/DAPP/SumatraPDF/SumatraPDF*exe}' >>$scriptDir/export/modulefiles/rdee/default
+            fi
+        fi
         if [[ -n $profile ]]; then
             if [[ $valid_python == 0 ]]; then
                 error "Add statement in profile requires python with version >= 3.6, now is ${pyver}"
