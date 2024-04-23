@@ -239,7 +239,7 @@ EOF
 # >>>>>>>>>>>>>> WSL settings
 export winuser=$winuser
 export Onedrive=$reOnedrive
-alias cdO='cd \$OneDrive/recRoot'
+alias cdO='cd \$Onedrive/recRoot'
 export Baidusync=$reBaidusync
 alias cdB='cd \$Baidusync/recRoot'
 export winHome=/mnt/c/Users/${winuser}
