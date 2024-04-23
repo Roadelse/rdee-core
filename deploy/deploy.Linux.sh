@@ -231,6 +231,8 @@ alias gf='gfortran'
 alias web='echo "plz copy : export http_proxy=127.0.0.1:port; export https_proxy=127.0.0.1:port"'
 alias unweb='unset https_proxy; unset http_proxy'
 
+export pipsrc_tsh=https://pypi.tuna.tsinghua.edu.cn/simple
+
 EOF
         if [[ $isWSL == 1 ]]; then
             cat <<EOF >>$scriptDir/export/setenv.rdee.sh
@@ -317,6 +319,8 @@ set-alias gf {gfortran}
 
 set-alias web {echo "plz copy : export http_proxy=127.0.0.1:port; export https_proxy=127.0.0.1:port"}
 set-alias unweb {unset https_proxy; unset http_proxy}
+
+setenv pipsrc_tsh https://pypi.tuna.tsinghua.edu.cn/simple
 
 EOF
 
