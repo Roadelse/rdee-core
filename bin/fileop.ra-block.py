@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     if not args.srcfile or not args.dstfile:
         raise TypeError("The following arguments are requireds: dstfile, srcfile")
-
+    # print(args)
     ra_nlines(args.dstfile, args.srcfile, cheader=args.header, replace_only=args.replace_only)
 
 

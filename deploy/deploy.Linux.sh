@@ -421,7 +421,7 @@ EOF
                 python $scriptDir/../bin/fileop.ra-block.py $scriptDir/export/setenv.rdee.sh .temp.$proj
             else
                 envpaths=($($scriptDir/tools/extract-repo-env.py $repo_dir/deploy/export/modulefiles/${repo_name}/default .temp.rdee-core))
-                python $scriptDir/../bin/fileop.ra-block.py $scriptDir/export/modulefiles/default .temp.$proj
+                python $scriptDir/../bin/fileop.ra-block.py $scriptDir/export/modulefiles/rdee/default .temp.$proj
             fi
             rm -f .temp.$proj
             for ep in "${envpaths[@]}"; do

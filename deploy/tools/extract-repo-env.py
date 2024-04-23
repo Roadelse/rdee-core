@@ -26,10 +26,10 @@ def main(ifile: str, ofile: str):
             f.write(rst + "\n")
     else:
         assert basename(ifile) == "default", f"{ifile=}"
-        proj: str = basename(dirname(abspath(ofile)))
+        proj: str = basename(dirname(abspath(ifile)))
         rst = f"# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [{proj}]\n"
         for L in open(ifile).readlines():
-            if L.startswith("#") or L == "":
+            if L.startswith("#") or L.strip() == "":
                 continue
             if L.startswith("prepend-path PATH "):
                 paths = re.search(r"prepend-path PATH (.*)", L).groups()
