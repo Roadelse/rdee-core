@@ -289,6 +289,7 @@ setenv reTest ${reTest}
 set-alias cdR {cd $reRec}
 set-alias cdG {cd $reGit}
 
+prepend-path PATH ${scriptDir}/export/bin
 
 setenv ANSI_RED {\033[31m}
 setenv ANSI_GREEN {\033[32m}
