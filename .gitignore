@@ -1,4 +1,4 @@
-/deploy/export/
+/deploy/export*/
 __pycache__/
 *egg-info/
 
