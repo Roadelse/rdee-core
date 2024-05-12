@@ -275,6 +275,8 @@ EOF
     elif [[ $deploy_mode == module ]]; then
         mkdir -p $scriptDir/export/modulefiles/rdee
         cat <<EOF >$scriptDir/export/modulefiles/rdee/default
+#%Module1.0
+
 setenv reHome ${reHome}
 setenv reRec ${reRec}
 setenv reGit ${reGit}
