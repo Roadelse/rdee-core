@@ -18,13 +18,15 @@ def main():
         f.write("#!/bin/bash\n\n")
         for L in lines:
             L = L.strip()
-            if L.startswith("#"):
-                f.write("# ")
+            if not L:
+                f.write("\n")
+            elif L.startswith("#"):
+                f.write("# \n")
             elif L.startswith("setenv "):
                 vn, vv = re.search(r"setenv +([^ ]*) +(.*)$", L).groups()
                 f.write(f"export {vn}={vv}\n")
             else:
-                raise NotImplementedError("Unknown statement by now, please update teh code")
+                raise NotImplementedError(f"Unknown statement: {L}")
 
 
 if __name__ == "__main__":

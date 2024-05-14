@@ -18,8 +18,10 @@ def main():
         f.write("#!/bin/csh\n\n")
         for L in lines:
             L = L.strip()
-            if L.startswith("#"):
-                f.write("# ")
+            if not L:
+                f.write("\n")
+            elif L.startswith("#"):
+                f.write("# \n")
             elif L.startswith("export "):
                 vn, vv = re.search(r"export +([^ ]*)=(.*)$", L).groups()
                 f.write(f"setenv {vn} {vv}\n")
