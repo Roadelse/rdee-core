@@ -35,7 +35,7 @@ def all2ymd(dstr: str):
 
 def _get_date_obj(dstr: str):
     if len(dstr) == 8:
-        date_obj = datetime.date.fromisoformat(ymd)
+        date_obj = datetime.date.fromisoformat(dstr)
     if len(dstr) == 7:
         date_obj = datetime.datetime.strptime(dstr, "%Y%j").date()
     return date_obj

@@ -26,6 +26,6 @@ readarray -t symfiles < <(find . -maxdepth 1 -type l)
 for sf in "${symfiles[@]}"; do
     abspath=$(readlink -f $sf)
     if [[ -n "$abspath" ]]; then
-        echo "ln -sf $abspath ."
+	echo "ln -Tsf $abspath $sf"
     fi
 done
