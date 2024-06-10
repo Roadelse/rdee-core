@@ -262,7 +262,7 @@ EOF
 source $scriptDir/export/setenv.rdee.sh
 
 EOF
-            python $scriptDir/../bin/fileop.ra-block.py $profile .temp.$proj
+            python $scriptDir/../bin/fileop.wa-block.py $profile .temp.$proj
 
             if [[ $? -eq 0 ]]; then
                 success "Succeed to add source statements in $profile"
@@ -356,7 +356,7 @@ EOF
 module use $scriptDir
 
 EOF
-            python $scriptDir/../bin/fileop.ra-block.py $profile .temp.$proj
+            python $scriptDir/../bin/fileop.wa-block.py $profile .temp.$proj
 
             if [[ $? -eq 0 ]]; then
                 success "Succeed to add source statements in $profile"
@@ -425,10 +425,10 @@ EOF
             cd $scriptDir/export/bin
             if [[ $deploy_mode == setenv ]]; then
                 envpaths=($($scriptDir/tools/extract-repo-env.py $repo_dir/deploy/export/setenv.${repo_name}.sh .temp.$proj))
-                python $scriptDir/../bin/fileop.ra-block.py $scriptDir/export/setenv.rdee.sh .temp.$proj
+                python $scriptDir/../bin/fileop.wa-block.py $scriptDir/export/setenv.rdee.sh .temp.$proj
             else
                 envpaths=($($scriptDir/tools/extract-repo-env.py $repo_dir/deploy/export/modulefiles/${repo_name}/default .temp.rdee-core))
-                python $scriptDir/../bin/fileop.ra-block.py $scriptDir/export/modulefiles/rdee/default .temp.$proj
+                python $scriptDir/../bin/fileop.wa-block.py $scriptDir/export/modulefiles/rdee/default .temp.$proj
             fi
             rm -f .temp.$proj
             for ep in "${envpaths[@]}"; do
