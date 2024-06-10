@@ -11,6 +11,7 @@
 #@      ● python3 fileop.ra-block.py basefile rafile -a $header   # set header content for operation:append
 #@      ● python3 fileop.ra-block.py basefile rafile -r   # only do operation:replace, do not append
 #@ ----------------------------------------------------------------
+#@ 2024-06-10       update      | use empty line as the undefined header rather than raiseing an error
 #@ 2024-04-12       rebuild     | use argparse to resolve command line arguments now
 #@ 2024-02-20       Init
 #@ <Introduction/>
@@ -39,7 +40,7 @@ headerStock = {
 }
 
 #@ core
-def ra_nlines(basefile: str, rafile: str, cheader: Optional[str] = None, replace_only: bool = False) -> None:
+def ra_nlines(basefile, rafile, cheader = None, replace_only = False):
     #@ <prepare>
     #@ <.pre-check>
     assert os.path.exists(rafile)
@@ -54,7 +55,7 @@ def ra_nlines(basefile: str, rafile: str, cheader: Optional[str] = None, replace
                 header = cheader
         else:
             ext = os.path.splitext(basefile)[1]
-            header = headerStock[ext]
+            header = headerStock.get(ext, "\n")
         with open(basefile, "w") as f:
             f.write(header.replace(r"\n", "\n") + "\n\n")
             f.write(open(rafile, encoding="utf-8").read())
