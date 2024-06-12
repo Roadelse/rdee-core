@@ -5,6 +5,7 @@ import sys
 import os
 import os.path
 import glob
+import time
 import itertools
 import traceback
 
@@ -15,6 +16,13 @@ try:
     with_mpi = True
 except:
     with_mpi = False
+
+if os.getenv("HTC_PSEUDORUN"):
+    pseudo_run = True
+else:
+    pseudo_run = False
+
+
 
 class Jobdef:
     def __init__(self, jdfile: str):
@@ -30,18 +38,30 @@ class Jobdef:
         if with_mpi and size > 1:
             self.commands = comm.bcast(self.commands, root = 0)
 
+    def logI(msg: str):
+        now = time.strftime("%Y/%m/%d %H:%M:%S")
+        if with_mpi:
+            print(f"-- {now} ({rank=}) | {msg}")
+        else:
+            print(f"-- {now} | {msg}")
+
     def run(self):
         if with_mpi:
-            # print("cp111")
+            comm.barrier()
             for i in range(rank, len(self.commands), size):
-                # print(f"{rank=}, {size=}, {i=}")
                 self.run_cmdset(self.commands[i])
+            comm.barrier()
         else:
             for cmdset in self.commands:
                 self.run_cmdset(cmdset)
 
     def run_cmdset(self, cmdset):
         for cmd in cmdset:
+            self.logI(f"run: {cmd}")
+
+            if pseudo_run:
+                continue
+
             rstat: int = os.system(cmd)
             if rstat != 0:
                 raise RuntimeError(f"Error in os run: {cmd}")
@@ -50,13 +70,14 @@ class Jobdef:
 
         with open(self.jdfile, 'r') as file:
             self.defdict = toml.load(file)
+        assert "params" in self.defdict
 
         params_solid = {}
         for k, v in self.defdict["params"].items():
             if not isinstance(v, dict):
                 params_solid[k] = v
-        params_product = borrowed_product_withkey(self.defdict["params"]["product"])
-        params_zip = borrowed_zip_withkey(self.defdict["params"]["zip"])
+        params_product = borrowed_product_withkey(self.defdict["params"]["product"]) if "product" in self.defdict["params"] else [{}]
+        params_zip = borrowed_zip_withkey(self.defdict["params"]["zip"]) if "zip" in self.defdict["params"] else [{}]
         self.params = [{**a, **b, **c} for a,b,c in itertools.product([params_solid], params_product, params_zip)]
 
     def buildCommands(self):
@@ -136,6 +157,7 @@ ct3 = ["c", "d"]
 
     
     if with_mpi:
+        comm.barrier()
         try:
             jd = Jobdef("__utest.toml")
             jd.run()
