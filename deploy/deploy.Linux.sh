@@ -120,14 +120,20 @@ if [[ $show_help == 1 ]]; then
 usage: ./rdee.init.sh [options]
 
 options:
-    ● \033[32m-h\033[0m
+    ● \033[32m-h | --help\033[0m
         show help information
-    ● \033[32m-e\033[0m
-        Do not do any operation rather than echo
-    ● \033[32m-r\033[0m, default:\$HOME
+    ● \033[32m-r | --reHome\033[0m, default:\$HOME
         set reHome path
-    ● \033[32m-p\033[0m, [optional]
+    ● \033[32m-d | --deploy_mode\033[0m, default:auto
+        set deploy_mode, supporting auto, setenv, module and module+
+    ● \033[32m-p | --profile \033[0m
         set target profile to be updated.
+    ● \033[32m-w | --with_repos \033[0m
+        set other reposotories to be deployed together
+    ● \033[32m-u\033[0m
+        Start unittest
+    ● \033[32m-v\033[0m
+        Turn on verbose print
 "
     exit 0
 fi
