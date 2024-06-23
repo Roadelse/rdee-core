@@ -32,7 +32,7 @@ if ($bindarypath) {
         if ($_.Name.EndsWith(".sh")) {
             continue
         }
-        New-Item -ItemType SymbolicLink -Target ($_.FullName) -Path "$bindarypath/$($_.Name)" -Force
+        New-Item -ItemType SymbolicLink -Target ($_.FullName) -Path "$bindarypath/$($_.Name)" -Force | Out-Null
     }
 } 
 else {
@@ -43,7 +43,7 @@ else {
         }
         # Write-Output "export.Windows/bin/$($_.Name)"
         Write-Output "New-Item -ItemType SymbolicLink -Target $($_.FullName) -Path export.Windows/bin/$($_.Name) -Force"
-        New-Item -ItemType SymbolicLink -Target ($_.FullName) -Path "export.Windows/bin/$($_.Name)" -Force
+        New-Item -ItemType SymbolicLink -Target ($_.FullName) -Path "export.Windows/bin/$($_.Name)" -Force | Out-Null
     }
 
     @"
@@ -52,6 +52,6 @@ else {
 
 "@ | Set-Content .temp
 
-    python $PSScriptRoot/../bin/fileop.ra-block.py $profile.CurrentUserAllHosts .temp
+    python $PSScriptRoot/../bin/fileop.wa-block.py $profile.CurrentUserAllHosts .temp
     Remove-Item .temp -Force
 }
