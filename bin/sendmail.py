@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 from time import asctime
 
 
-def send_email(sendto, subject, content, configDict=None, configfile=None, host=None, user=None, auth=None):
+def send_email(sendto, title, content, configDict=None, configfile=None, host=None, user=None, auth=None):
     if configDict:
         host = configDict["host"]
         user = configDict["user"]
@@ -35,7 +35,7 @@ def send_email(sendto, subject, content, configDict=None, configfile=None, host=
     mail_receivers = [sendto]
     message = MIMEMultipart()
     message['From'] = Header(user)  # 寄件人
-    message['Subject'] = Header(subject)
+    message['Subject'] = Header(title)
     message.attach(MIMEText(content, 'plain', 'utf-8'))
     print("message is {}".format(message.as_string())) # debug用
     if ":" in host:
@@ -63,6 +63,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.configfile:
-        send_email(args.sendto, args.subject, args.content, configfile=args.configfile)
+        send_email(args.sendto, args.title, args.content, configfile=args.configfile)
     else:
-        send_email(args.sendto, args.subject, args.content, host=args.host, user=args.user, auth=args.auth)
+        send_email(args.sendto, args.title, args.content, host=args.host, user=args.user, auth=args.auth)

@@ -11,18 +11,23 @@ import time
 
 import sendmail
 
-def monitor_slurm(configdict, sendto):
-    jobids = osrun("squeue | grep -Po '^\s+\d+' | grep -Po '\d+'").splitlines()
+def monitor_slurm(configDict):
+    jobids = osrun(r"squeue | grep -Po '^\s+\d+' | grep -Po '\d+'").splitlines()
+    print(f"target job ids: {jobids}")
     while jobids:
         time.sleep(60)
-        jobids_now = osrun("squeue | grep -Po '^\s+\d+' | grep -Po '\d+'").splitlines()
+        print(f"check slurm jobs: {jobids} @{nowStr()}")
+        jobids_now = osrun(r"squeue | grep -Po '^\s+\d+' | grep -Po '\d+'").splitlines()
         for jid in jobids:
             if jid not in jobids_now:
                 jstate = osrun(f"sacct -j {jid}  --noheader -b | head -n 1 | grep COMPLETED")
                 if jstate:
-                    sendmail.send_mail(sendto, f"{jid} 任务失败", "", configDict=configDict)
+                    print(f"job {jid} failed")
+                    sendmail.send_email(configDict["sendto"], f"{jid} 任务完成", "", configDict=configDict)
                 else:
-                    sendmail.send_mail()        
+                    print(f"job {jid} completed")
+                    sendmail.send_email(configDict["sendto"], f"{jid} 任务失败", "", configDict=configDict)
+                jobids.remove(jid)
 
 def osrun(cmd: str, logfile = ""):
     if logfile:
@@ -35,11 +40,14 @@ def osrun(cmd: str, logfile = ""):
     if not logfile:
         return robj.stdout.strip()
 
+def nowStr():
+    return time.strftime("%Y%m%d-%H%M%S")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""send e-mail via python built-in smtp""")
-    parser.add_argument("--configfile", required=True, help="use a config file rather than setting each item via command argument")
-    parser.add_argument("--sendto", required=True, help="email destination")
-    parser.add_argument("--system", required=True, help="pbs or slurm")
+    parser.add_argument("--configfile", "-c", required=True, help="use a config file rather than setting each item via command argument")
+    parser.add_argument("--system", "-s", required=True, help="pbs or slurm")
 
     args = parser.parse_args()
     
@@ -47,14 +55,11 @@ if __name__ == "__main__":
         raise RuntimeError(f"configfile={args.configfile} doesn't exist!")
     try:
         with open(args.configfile, "r") as f:
-            configdict = json.load(f)
-            if "host" not in configdict or "user" not in configdict or "authcode" not in configdict:
-                raise RuntimeError("Missing required key: user/host/authcode")
-        args.__dict__.update(configdict)
+            configDict = json.load(f)
     except:
         raise RuntimeError(f"Failed to load json configfile={args.configfile}")
 
-    if args.system.lower() == "pbs":
-        monitor_slurm(configdict, sendto=args.sendto)
+    if args.system.lower() == "slurm":
+        monitor_slurm(configDict)
     else:
         raise NotImplementedError()

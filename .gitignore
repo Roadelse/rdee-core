@@ -8,3 +8,4 @@ wf.*.md
 /dist/
 ade.*
 ade-*
+slurm-*.out
