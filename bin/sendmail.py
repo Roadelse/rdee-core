@@ -1,19 +1,37 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import sys
+import os
+import os.path
 import argparse
+import json
 import smtplib
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import asctime
 
-def send_email(sendto, subject, content, host, user, auth): # email_content是一个字符串
-    # mail_host = "smtp.qq.com" # 这个去邮箱找
-    # mail_port = 587
-    # mail_user = "512334991@qq.com"
-    # mail_auth_code = "?????"
-    # mail_sender = user # 用mail_user 作为发送人
+
+def send_email(sendto, subject, content, configDict=None, configfile=None, host=None, user=None, auth=None):
+    if configDict:
+        host = configDict["host"]
+        user = configDict["user"]
+        auth = configDict["auth"]
+    elif configfile:
+        if not configfile.endswith(".json"):
+            raise TypeError(f"Unknown configfile: {configfile}")
+        if not os.path.exists(configfile):
+            raise FileNotFoundError(f"{configfile=}")
+        with open(configfile, "r") as f:
+            configDict = json.load(f)
+        host = configDict["host"]
+        user = configDict["user"]
+        auth = configDict["auth"]
+    else:
+        if host is None or user is None or auth is None:
+            raise TypeError("require host, user & auth without configfile / configDict")
+
     mail_receivers = [sendto]
     message = MIMEMultipart()
     message['From'] = Header(user)  # 寄件人
@@ -33,13 +51,18 @@ def send_email(sendto, subject, content, host, user, auth): # email_content是�
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""send e-mail via python built-in smtp""")
-    parser.add_argument('--host', required=True, help='ip:port')
-    parser.add_argument('--user', '-u', required=True, help='example@mail.com')
-    parser.add_argument('--to', '-t', required=True, help='example@mail.com')
-    parser.add_argument('--authcode', "-a", required=True, help="your authentication code from SMTP settings in your mail")
+    parser.add_argument('--host', help='ip:port')
+    parser.add_argument('--user', '-u', help='example@mail.com')
+    parser.add_argument('--auth', "-a", help="your authentication code from SMTP settings in your mail")
+    parser.add_argument("--configfile", help="use a config file rather than setting each item via command argument")
+
+    parser.add_argument('--sendto', '-s', required=True, help='example@mail.com')
     parser.add_argument('--content', "-c", default="", help="mail content")
-    parser.add_argument('--subject', "-s", required=True, help="mail subject")
+    parser.add_argument('--title', "-t", required=True, help="mail title")
 
     args = parser.parse_args()
 
-    send_email(args.to, args.subject, args.content, args.host, args.user, args.authcode)
+    if args.configfile:
+        send_email(args.sendto, args.subject, args.content, configfile=args.configfile)
+    else:
+        send_email(args.sendto, args.subject, args.content, host=args.host, user=args.user, auth=args.auth)
